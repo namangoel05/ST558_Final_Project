@@ -61,40 +61,25 @@ dashboardPage(
                 
                 
               )
-      ),  #Tab item
+      ),
       tabItem(tabName = "EDA",
               
               
+             
               fluidRow(
                 column(6,
-                       box(width=NULL,title="Categorical Summary",
-                           h5("Select two categorical variable for contigency table "),
-                           selectInput("cont_var1","First Selection",
-                                       c("Sex"="sex","Number of kids"="children",
-                                         "Smoking"="smoker",Area="region"),selected="sex"),
-                           selectInput("cont_var2","Second Selection",
-                                       c("Sex"="sex","Number of kids"="children",
-                                         "Smoking"="smoker",Area="region"),selected="smoker")
-                       )       
-                ),
-                column(6,
-                       box(width=NULL,title="Contingency Table",
-                           tableOutput("contingency_table"))
-                )
-              ),fluidRow(
-                column(6,
                        box(width=NULL,height=405,title="Numerical Summary",
-                           checkboxGroupInput("num_summary",
+                           checkboxGroupInput("numerical",
                                               "Variable selection for numerical summary",
-                                              c("Age"="age",
-                                                "BMI"="bmi","Number of kids"="children",
-                                                "Charges"="charges"),
-                                              selected=c("age","bmi","children","charges"))
+                                              c("Undergrad Degree"="Undergrad_Degree",
+                                                "Work Experience"="Work_Experience",
+                                                "Status"="Status"),
+                                              selected=c("Undergrad_Degree","Work_Experience","Status"))
                        )
                 ),
                 column(6,
                        box(width=NULL,title="Summary",
-                           dataTableOutput("numerical_summaries")
+                           dataTableOutput("num_summ")
                        )
                 )
               ),
@@ -109,45 +94,55 @@ dashboardPage(
               # ),
               fluidRow(
                 column(2,
-                       box(width=NULL,title="Plots for numerical variables",
-                           selectInput("box_or_hist","Select the kinds of plots you want to see",
-                                       c("Only Boxplots"="box_only","Only Histograms"="hist_only",
-                                         "Both Box plots and Histograms"="both_box_hist"),selected="both_box_hist")
-                       )       
-                ),
+                       box(width=NULL,title="Types of plot",
+                           selectInput("Scatter_Line","Please select between Scatter plot or Line plot",
+                                       c("Scatterplot"="scatter","Line"="line",
+                                         "Scatterplot and Line"="scatter_and_line"),selected="scatter")
+                       )),
+                
+                
                 column(5,
-                       box(width=NULL,
-                           plotOutput('bh_plot1')
-                       ),
-                       box(width=NULL,
-                           plotOutput('bh_plot3')
-                       ),
                        conditionalPanel(
-                         condition = "input.box_or_hist == 'both_box_hist'",
+                         condition = "input.Scatter_Line == 'scatter'",
                          box(width=NULL,
-                             plotOutput("bh_plot5")
+                             plotOutput('plot1')
+                         )),
+                       conditionalPanel(
+                         condition = "input.Scatter_Line == 'line'",
+                         box(width=NULL,
+                             plotOutput('plot3')
+                         )),
+                       conditionalPanel(
+                         condition = "input.Scatter_Line == 'scatter_and_line'",
+                         
+                         box(width=NULL,
+                             plotOutput("plot5")
                          ),
                          box(width=NULL,
-                             plotOutput("bh_plot7")
+                             plotOutput("plot7")
                          )
-                       ) 
+                       )      
                 ),
                 column(5,
-                       box(width=NULL,
-                           plotOutput('bh_plot2')
-                       ),
-                       box(width=NULL,
-                           plotOutput('bh_plot4')
-                       ),
                        conditionalPanel(
-                         condition = "input.box_or_hist == 'both_box_hist'",
+                         condition = "input.Scatter_Line == 'scatter'",
                          box(width=NULL,
-                             plotOutput("bh_plot6")
+                             plotOutput('plot2')
+                         )),
+                       conditionalPanel(
+                         condition = "input.Scatter_Line == 'line'",
+                         box(width=NULL,
+                             plotOutput('plot4')
+                         )),
+                       conditionalPanel(
+                         condition = "input.Scatter_Line == 'scatter_and_line'",
+                         box(width=NULL,
+                             plotOutput("plot6")
                          ),
                          box(width=NULL,
-                             plotOutput("bh_plot8")
+                             plotOutput("plot8")
                          )
-                       )
+                       )   
                 )
               ),
               fluidRow(
@@ -164,9 +159,9 @@ dashboardPage(
                        box(width=NULL,title="Plots for categorical variables",
                            checkboxGroupInput("bar_plots",
                                               "Select the variables for which you want to see bar plots",
-                                              c("Sex"="sex","Number of kids"="children",
-                                                "Smoking"="smoker",Area="region"),
-                                              selected=c("sex","children","smoker","region"))
+                                              c("Work Experience"="Work_Experience","Status"="Status",
+                                                "Undergraduate Degree"="Undergrad_Degree"),
+                                              selected=c("Work_Experience","Status","Undergrad_Degree"))
                        )
                 ),
                 column(10,
@@ -175,24 +170,19 @@ dashboardPage(
                                 
                                 
                                 conditionalPanel(
-                                  condition = "input.bar_plots.includes('sex')",
+                                  condition = "input.bar_plots.includes('Work_Experience')",
                                   box(width=NULL,
-                                      plotOutput("plot_sex"))
+                                      plotOutput("work_exp"))
                                 ),
                                 conditionalPanel(
-                                  condition = "input.bar_plots.includes('children')",
+                                  condition = "input.bar_plots.includes('Status')",
                                   box(width=NULL,
-                                      plotOutput("plot_children"))
+                                      plotOutput("job_status"))
                                 ),
                                 conditionalPanel(
-                                  condition = "input.bar_plots.includes('smoker')",
+                                  condition = "input.bar_plots.includes('Undergrad_Degree')",
                                   box(width=NULL,
-                                      plotOutput("plot_smoker"))
-                                ),
-                                conditionalPanel(
-                                  condition = "input.bar_plots.includes('region')",
-                                  box(width=NULL,
-                                      plotOutput("plot_region"))
+                                      plotOutput("plot_degree"))
                                 ),
                                 
                                 
