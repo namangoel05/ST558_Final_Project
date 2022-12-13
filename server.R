@@ -41,8 +41,7 @@ shinyServer(function(input, output) {
     for (i in newdata){
       if(i=="Work_Experience"){
         school_data2$Work_Experience <- factor(school_data2$Work_Experience, levels = 0:1, labels =c("No", "Yes"))
-        p<-ggplot(data=school_data2, aes(x=Work_Experience,fill = Work_Experience, colour = Work_Experience)) +
-          geom_bar(position = "dodge")
+        p<-ggplot(data=school_data2, aes(x=Work_Experience,fill = Work_Experience, colour = Work_Experience)) + geom_bar(position = "dodge")
       }}
     p
   })
@@ -51,8 +50,7 @@ shinyServer(function(input, output) {
     for (i in newdata){
       if(i=="Status"){
         school_data2$Status <- factor(school_data2$Status, levels = 0:1, labels =c("Not Placed", "Placed"))
-        p<-ggplot(data=school_data2, aes(x=Status,fill = Status, colour =Status)) +
-          geom_bar(position = "dodge")
+        p<-ggplot(data=school_data2, aes(x=Status,fill = Status, colour =Status)) + geom_bar(position = "dodge")
       }}
     p
   })
@@ -61,8 +59,7 @@ shinyServer(function(input, output) {
     for (i in newdata){
       if(i=="Undergrad_Degree"){
         school_data2$Undergrad_Degree <- factor(school_data2$Undergrad_Degree, levels = 1:5, labels = c("Business","Computer Science","Engineering","Finance","Art"))
-        p<-ggplot(data=school_data2, aes(x=Undergrad_Degree,fill = Undergrad_Degree, colour =Undergrad_Degree)) +
-          geom_bar(position = "dodge")
+        p<-ggplot(data=school_data2, aes(x=Undergrad_Degree,fill = Undergrad_Degree, colour =Undergrad_Degree)) + geom_bar(position = "dodge")
       }}
     p
   }) # Code for plotting scatterplot or line graph
@@ -75,9 +72,7 @@ shinyServer(function(input, output) {
         group_by(Undergrad_Grade) %>% 
         summarise(Avg_Salary = mean(Salary))
       p<-ggplot(data = plot, aes(Undergrad_Grade,Avg_Salary)) + 
-        labs(x="Undergrad_Grade",y="Average Salary",title="Undergrad Grade vs Salary") + 
-        geom_point()+
-        theme(plot.title = element_text(hjust = 0.5))
+        labs(x="Undergrad_Grade",y="Average Salary",title="Undergrad Grade vs Salary") + geom_point() + theme(plot.title = element_text(hjust = 0.5))
     }
     p
   })
@@ -90,9 +85,7 @@ shinyServer(function(input, output) {
         group_by(MBA_Grade) %>%
         summarise(Avg_Salary = mean(Salary))
       p<-ggplot(data = plot, aes(MBA_Grade,Avg_Salary)) +
-        labs(x="MBA_Grade",y="Average Salary",title="MBA Grade vs Salary") +
-        geom_point()+
-        theme(plot.title = element_text(hjust = 0.5))
+        labs(x="MBA_Grade",y="Average Salary",title="MBA Grade vs Salary") + geom_point() + theme(plot.title = element_text(hjust = 0.5))
     }
     p
   })
@@ -105,9 +98,7 @@ shinyServer(function(input, output) {
         group_by(Undergrad_Grade) %>%
         summarise(Avg_Salary = mean(Salary))
       p<-ggplot(data = plot, aes(Undergrad_Grade,Avg_Salary)) +
-        labs(x="Undergrad_Grade",y="Average Salary",title="Undergrad Grade vs Salary") +
-        geom_point()+
-        theme(plot.title = element_text(hjust = 0.5))
+        labs(x="Undergrad_Grade",y="Average Salary",title="Undergrad Grade vs Salary") + geom_point() + theme(plot.title = element_text(hjust = 0.5))
     }
     p
   })
@@ -119,25 +110,21 @@ shinyServer(function(input, output) {
         group_by(MBA_Grade) %>%
         summarise(Avg_Salary = mean(Salary))
       p<-ggplot(data = plot, aes(MBA_Grade,Avg_Salary)) +
-        labs(x="MBA_Grade",y="Average Salary",title="MBA Grade vs Salary") +
-        geom_point()+
-        theme(plot.title = element_text(hjust = 0.5))
+        labs(x="MBA_Grade",y="Average Salary",title="MBA Grade vs Salary") + geom_point() + theme(plot.title = element_text(hjust = 0.5))
     }
     p
   })
   
   output$plot3<-renderPlot({
     if(input$Scatter_Line=="line"){
-      p<-plot(seq(1:1200), school_data2$Salary, xlab = "Number", ylab = "Salary", 
-              type = "l")
+      p<-plot(seq(1:1200), school_data2$Salary, xlab = "Number", ylab = "Salary", type = "l")
     }
     
     p
   })
   output$plot4<-renderPlot({
     if(input$Scatter_Line=="line"){
-      p<-plot(seq(1:1200), school_data2$MBA_Grade, xlab = "Number", ylab = "MBA Grade", 
-              type = "l")
+      p<-plot(seq(1:1200), school_data2$MBA_Grade, xlab = "Number", ylab = "MBA Grade", type = "l")
     }
     
     p
@@ -145,16 +132,14 @@ shinyServer(function(input, output) {
   
   output$plot7<-renderPlot({
     if(input$Scatter_Line=="scatter_and_line"){
-      p<-plot(seq(1:1200), school_data2$Salary, xlab = "Number", ylab = "Salary", 
-              type = "l")
+      p<-plot(seq(1:1200), school_data2$Salary, xlab = "Number", ylab = "Salary", type = "l")
     }
     
     p
   })
   output$plot8<-renderPlot({
     if(input$Scatter_Line=="scatter_and_line"){
-      p<-plot(seq(1:1200), school_data2$MBA_Grade, xlab = "Number", ylab = "MBA Grade", 
-              type = "l")
+      p<-plot(seq(1:1200), school_data2$MBA_Grade, xlab = "Number", ylab = "MBA Grade", type = "l")
     }
     
     p
@@ -222,13 +207,8 @@ shinyServer(function(input, output) {
     cv<-trainControl(method = "repeatedcv", number = 5, repeats = 3)
     tuning<-expand.grid(.mtry=ncol(Forest_Train)/3)
     ntrees=tune_rf()
-    forest_fit <- train(Employability_After~., 
-                        data = Forest_Train, 
-                        method = "rf",
-                        trControl=cv, 
-                        preProcess = c("center", "scale"),
-                        ntree=ntrees,
-                        tuneGrid = tuning)
+    forest_fit <- train(Employability_After~., data = Forest_Train, method = "rf", trControl=cv, preProcess = c("center", "scale"),
+                        ntree=ntrees, tuneGrid = tuning)
     forest_predict <- predict(forest_fit, newdata = Forest_Train)
     forest_train_mse <- sqrt(mean((forest_predict - Forest_Train$Employability_After)^2))
     print(forest_train_mse)
@@ -249,13 +229,8 @@ shinyServer(function(input, output) {
     cv<-trainControl(method = "repeatedcv", number = 5, repeats = 3)
     tuning<-expand.grid(.mtry=ncol(Forest_Train)/3)
     ntrees=tune_rf()
-    forest_fit <- train(Employability_After~., 
-                        data = Forest_Train, 
-                        method = "rf",
-                        trControl=cv, 
-                        preProcess = c("center", "scale"),
-                        ntree=ntrees,
-                        tuneGrid = tuning)
+    forest_fit <- train(Employability_After~., data = Forest_Train, method = "rf", trControl=cv, 
+                        preProcess = c("center", "scale"), ntree=ntrees, tuneGrid = tuning)
     forest_predict <- predict(forest_fit, newdata = Forest_Test)
     rf_test_mse <- sqrt(mean((forest_predict - Forest_Test$Employability_After)^2))
     print(rf_test_mse)
@@ -296,11 +271,8 @@ shinyServer(function(input, output) {
     Decision_Train <- tree_data[split_size,]
     
     Decision_Test <- tree_data[-split_size,]
-    decision_fit = train(Employability_After ~ ., 
-                         data=Decision_Train, 
-                         method="rpart", 
-                         trControl = trainControl(method = "cv"),
-                         tuneGrid =  expand.grid(cp = tune_dt())
+    decision_fit = train(Employability_After ~ ., data=Decision_Train, method="rpart", 
+                         trControl = trainControl(method = "cv"), tuneGrid =  expand.grid(cp = tune_dt())
     )
     decision_predict=predict(decision_fit,Decision_Test)
     decision_test_rmse<-sqrt(mean((Decision_Test$Employability_After-decision_predict)^2))
@@ -378,10 +350,7 @@ shinyServer(function(input, output) {
       
       Decision_Test <- school_data2[-split_quant,] 
       
-      fit_decision = train(Employability_After ~ ., 
-                           data=Decision_Train, 
-                           method="rpart", 
-                           trControl = trainControl(method = "cv"),
+      fit_decision = train(Employability_After ~ ., data=Decision_Train, method="rpart", trControl = trainControl(method = "cv"),
                            tuneGrid =  expand.grid(cp = tune_dt())
       )
       predict_value=predict(fit_decision,data.frame(Undergrad_Degree=as.factor(parameters[[1]]),Undergrad_Grade=as.numeric(parameters[[2]]),MBA_Grade=as.numeric(parameters[[3]]),Work_Experience=as.factor(parameters[[4]]),Employability_Before=as.numeric(parameters[[5]]),
@@ -400,12 +369,8 @@ shinyServer(function(input, output) {
       cv<-trainControl(method = "repeatedcv", number = 5, repeats = 3)
       
       ntrees=tune_rf()
-      fit_forest <- train(Employability_After~., 
-                          data = Forest_Train, 
-                          method = "rf",
-                          trControl=cv, 
-                          preProcess = c("center", "scale"),
-                          ntree=ntrees
+      fit_forest <- train(Employability_After~., data = Forest_Train, method = "rf", trControl=cv, 
+                          preProcess = c("center", "scale"), ntree=ntrees
       )
       predict_value <- predict(fit_forest, data.frame(Undergrad_Degree=as.factor(parameters[[1]]),Undergrad_Grade=as.numeric(parameters[[2]]),MBA_Grade=as.numeric(parameters[[3]]),Work_Experience=as.factor(parameters[[4]]),Employability_Before=as.numeric(parameters[[5]]),
                                                       Status=as.factor(parameters[[6]]),Salary=as.numeric(parameters[[7]])))
