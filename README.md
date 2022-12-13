@@ -27,4 +27,4 @@ install.packages("corrplot")
 
 ## Code to Run App
 
-runGitHub("STdd5_Final_Project", "namangoel05")
+runGitHub("ST558_Final_Project", "namangoel05")
