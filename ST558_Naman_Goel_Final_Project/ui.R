@@ -279,65 +279,49 @@ dashboardPage(
                            ),
                            column(5,
                                   box(width=NULL,status="success",
-                                      sliderInput("split_now","Training Set proportion",
-                                                  min=0.6,max=0.9,value=0.65,step=0.05))
+                                      sliderInput("split_now","Training Set Splitting %age",min=0.6,max=0.9,value=0.65,step=0.05))
                            ),
                            column(5,
-                                  box(width =NULL,status = "info",align="center",background="aqua",
-                                      
-                                      actionButton("split","Click here to split Data"))
+                                  box(width =NULL,status = "info",align="center",background="aqua", actionButton("split","Split Data"))
                            ),
                            column(1
                            )
                          ),
                          fluidRow(
                            column(4,
-                                  box(width=NULL,title="Generalized Linear Model: Linear Regression",
-                                      status="info",solidHeader = TRUE,
-                                      checkboxGroupInput("variable1_train","Select predictor variables:",
-                                                         c("Undergraduate Degree"="Undergrad_Grade",
-                                                           "Undergraduate Grade"="Undergrad_Grade",
-                                                           "MBA Grade"="MBA_Grade",
-                                                           "Previous Work Experience"="Work_Experience",
-                                                           "Empliyability Before MBA"="Employability_Before",
-                                                           "Empliyability After MBA"="Employability_After",
-                                                           "Job Status"="Status",
-                                                           "Salary"="Salary"),
+                                  box(width=NULL,title="Linear Regression",status="info",solidHeader = TRUE,
+                                      checkboxGroupInput("variable1_train","Select variables:",
+                                                         c("Undergraduate Degree"="Undergrad_Degree","Undergraduate Grade"="Undergrad_Grade",
+                                                           "MBA Grade"="MBA_Grade","Previous Work Experience"="Work_Experience",
+                                                           "Empliyability Before MBA"="Employability_Before",#"Empliyability After MBA"="Employability_After",
+                                                           "Job Status"="Status","Salary"="Salary"),
                                                          selected=c("Undergrad_Grade","Work_Experience","Status"))
                                   )
                            ),
                            column(4,
-                                  box(width=NULL,title="Classification Tree",
+                                  box(width=NULL,title="Regression Tree",
                                       status="info",solidHeader = TRUE,
-                                      checkboxGroupInput("train_var2","Select predictor variables:",
-                                                         c("Undergraduate Degree"="Undergrad_Grade",
-                                                           "Undergraduate Grade"="Undergrad_Grade",
-                                                           "MBA Grade"="MBA_Grade",
-                                                           "Previous Work Experience"="Work_Experience",
-                                                           "Empliyability Before MBA"="Employability_Before",
-                                                           "Empliyability After MBA"="Employability_After",
-                                                           "Job Status"="Status",
-                                                           "Salary"="Salary"),
+                                      checkboxGroupInput("variable2_train","Select variables:",
+                                                         c("Undergraduate Degree"="Undergrad_Degree","Undergraduate Grade"="Undergrad_Grade",
+                                                           "MBA Grade"="MBA_Grade","Previous Work Experience"="Work_Experience",
+                                                           "Empliyability Before MBA"="Employability_Before",#"Empliyability After MBA"="Employability_After",
+                                                           "Job Status"="Status","Salary"="Salary"),
                                                          selected=c("Undergrad_Grade","Work_Experience","Status")),
-                                      sliderInput("max_depth","Select the max depth of the tree",
-                                                  min=1,max=10,value=5,step=1)
+                                      sliderInput("complexity","Select the Complexity",
+                                                  min=0.0,max=0.5,value=0.2,step=0.05)
                                   )
                            ),
                            column(4,
                                   box(width=NULL,title="Random Forest Model",
                                       status="info",solidHeader = TRUE,
-                                      checkboxGroupInput("train_var3","Select predictor variables:",
-                                                         c("Undergraduate Degree"="Undergrad_Grade",
-                                                           "Undergraduate Grade"="Undergrad_Grade",
-                                                           "MBA Grade"="MBA_Grade",
-                                                           "Previous Work Experience"="Work_Experience",
-                                                           "Empliyability Before MBA"="Employability_Before",
-                                                           "Empliyability After MBA"="Employability_After",
-                                                           "Job Status"="Status",
-                                                           "Salary"="Salary"),
+                                      checkboxGroupInput("variable3_train","Select variables:",
+                                                         c("Undergraduate Degree"="Undergrad_Degree","Undergraduate Grade"="Undergrad_Grade",
+                                                           "MBA Grade"="MBA_Grade","Previous Work Experience"="Work_Experience",
+                                                           "Empliyability Before MBA"="Employability_Before",#"Empliyability After MBA"="Employability_After",
+                                                           "Job Status"="Status","Salary"="Salary"),
                                                          selected=c("Undergrad_Grade","Work_Experience","Status")),
-                                      sliderInput("mtry","Select the  number of variables to randomly sample as candidates at each split",
-                                                  min=1,max=10,value=3,step=1)
+                                      sliderInput("trees","Select number of variables to randomly sample for every split",
+                                                  min=1,max=101,value=10,step=5)
                                   )
                            )
                          ),
@@ -345,72 +329,44 @@ dashboardPage(
                            column(2),
                            column(8,align = "center",
                                   box(width=NULL,
-                                      h4("For each of the models select the predictor variables 
-                          and other model settings above.Use the button below to 
-                          train all the models and perform predictions on test data."),
-                                      #h5("NOTE: In case you need to change model parameters, follow these steps:"),
-                                      #h5("1.Uncheck the box below"),
-                                      #h5("2.Change model parameters/ predictor variables"),
-                                      #h5("3.Check the box below and wait till you see 'Training Complete' message"),
-                                      actionButton(inputId="model_train",label="Train models and Predict")
-                                      #textOutput("model_fits")
+                                      h4("Click below to check the RMSE of the 3 models"),
+                                      actionButton(inputId="train_mod",label="Train models and observe prediction")
                                   )
                            ),
                            column(2)
                          ),
                          fluidRow(
                            column(4,
-                                  box(width=NULL,title="Generalized Linear Model: Linear Regression",
-                                      status="info",solidHeader = TRUE,
-                                      h5(tags$b("Training accuracy:")),
-                                      verbatimTextOutput("train_stats_lg"),
-                                      h5(tags$b("Summary:")),
-                                      verbatimTextOutput("train_stats_lg_summary")
+                                  box(width=NULL,title="Linear Regression",status="info",solidHeader = TRUE,
+                                      h5(tags$b("Training RMSE:")),verbatimTextOutput("lin_train_rmse")
                                   )
                            ),
                            column(4,
-                                  box(width=NULL,title="Classification Tree",
-                                      status="info",solidHeader = TRUE,
-                                      h5(tags$b("Training accuracy:")),
-                                      verbatimTextOutput("train_stats_tree"),
-                                      h5(tags$b("Summary:")),
-                                      verbatimTextOutput("train_stats_tree_summary")
+                                  box(width=NULL,title="Regression Tree",status="info",solidHeader = TRUE,
+                                      h5(tags$b("Training RMSE:")),verbatimTextOutput("decision_tree_train_rmse")
                                       
                                   )
                            ),
                            column(4,
-                                  box(width=NULL,title="Random Forest Model",
-                                      status="info",solidHeader = TRUE,
-                                      h5(tags$b("Training accuracy:")),
-                                      verbatimTextOutput("train_stats_rf"),
-                                      h5(tags$b("Summary:")),
-                                      verbatimTextOutput("train_stats_rf_summary")
+                                  box(width=NULL,title="Random Forest Model",status="info",solidHeader = TRUE,
+                                      h5(tags$b("Training RMSE:")),verbatimTextOutput("rf_train_rmse")
                                   )
                            )
                          ),
                          fluidRow(
                            column(4,
-                                  box(width=NULL,status="info",
-                                      h5(tags$b("Testing accuracy:")),
-                                      verbatimTextOutput("test_stats_lg"),
-                                      h5(tags$b("Confusion Matrix:")),
-                                      verbatimTextOutput("test_cf_lg")
+                                  box(width=NULL,status="info",h5(tags$b("Testing RMSE:")),
+                                      verbatimTextOutput("linear_test_rmse")
                                   )
                            ),
                            column(4,
-                                  box(width=NULL,status="info",
-                                      h5(tags$b("Testing accuracy:")),
-                                      verbatimTextOutput("test_stats_tree"),
-                                      h5(tags$b("Confusion Matrix:")),
-                                      verbatimTextOutput("test_cf_tree")
+                                  box(width=NULL,status="info",h5(tags$b("Testing RMSE:")),
+                                      verbatimTextOutput("decision_tree_test_rmse")
                                   )
                            ),
                            column(4,
-                                  box(width=NULL,status="info",
-                                      h5(tags$b("Testing accuracy:")),
-                                      verbatimTextOutput("test_stats_rf"),
-                                      h5(tags$b("Confusion Matrix:")),
-                                      verbatimTextOutput("test_cf_rf")
+                                  box(width=NULL,status="info",h5(tags$b("Testing RMSE:")),
+                                      verbatimTextOutput("rf_test_rmse")
                                   )
                            )
                          )

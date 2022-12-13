@@ -33,7 +33,7 @@ shinyServer(function(input, output) {
   })
   output$num_summ<-renderDataTable({
     
-    df_summary<-school_data%>%select(summaries())
+    df_summary<-school_data2%>%select(summaries())
     describe(df_summary)[,1:6]
   })
   output$work_exp<- renderPlot({
@@ -169,155 +169,151 @@ shinyServer(function(input, output) {
   
   # Selecting features for linear regression
   lin_feat<-eventReactive(input$train_mod,{
-    val1<-c(input$variable1_train)
-  })
-  
-  # Fitting Linear Regression
-  output$linear_test_rmse<-renderText({
-    split_first<-split_data()
-    linear_feature<-lin_feat()
-    linear_data<-data%>%select(linear_feature,Salary)
-    split_size <- sample(nrow(linear_data), nrow(linear_data)*split_data())
-    
-    Linear_Train <- linear_data[split_size,]
-    
-    Linear_Test <- linear_data[-split_size,]
-    
-    linear_fit<-lm(Salary~.,data=Linear_Train,trControl=trainControl(method = "repeatedcv", number = 5, repeats = 3))
-    linear_predict=predict(linear_fit,Linear_Test)
-    linear_test_rmse<-sqrt(mean((Linear_Test$Salary-linear_predict)^2))
-    print(linear_test_rmse)
-  })
-  
-  output$linear_train_rmse<-renderText({
-    split_first<-split_data()
-    linear_feature<-lin_feat()
-    linear_data<-data%>%select(linear_feature,Salary)
-    split_size <- sample(nrow(linear_data), nrow(linear_data)*split_data())
-    
-    Linear_Train <- linear_data[split_size,]
-    
-    Linear_Test <- linear_data[-split_size,]
-    
-    linear_fit<-lm(Salary~.,data=Linear_Train,trControl=trainControl(method = "repeatedcv", number = 5, repeats = 3))
-    
-    linear_predict=predict(linear_fit,Linear_Train)
-    linear_train_rmse<-sqrt(mean((Linear_Train$Salary-linear_predict)^2))
-    print(linear_train_rmse)
-  })
-  
-  # Fitting Decision Tree
-  features_dt<-eventReactive(input$train_mod,{
-    val1<-c(input$train_var2)
-  })
-  
-  tune_dt<-eventReactive(input$train_mod,{
-    val1<-c(input$tree_cp)
-  })
-  
-  output$decision_tree_train_rmse<-renderText({
-    split_first<-split_data()
-    feat_dt<-features_dt()
-    dt_data<-data%>%select(feat_dt,Salary)
-    split_size <- sample(nrow(dt_data), nrow(dt_data)*split_data())
-    
-    trainSet_dt <- dt_data[split_size,]
-    
-    testSet_dt <- dt_data[-split_size,]
-    dt_fit = train(Salary ~ ., 
-                   data=trainSet_dt, 
-                   method="rpart", 
-                   trControl = trainControl(method = "cv"),
-                   tuneGrid =  expand.grid(cp = tune_dt()))
-    dt_predict=predict(dt_fit,trainSet_dt)
-    dt_train_rmse<-sqrt(mean((trainSet_dt$Salary-dt_predict)^2))
-    print(dt_train_rmse)
-    
-  })
-  
-  output$decision_tree_test_rmse<-renderText({
-    split_first<-split_data()
-    feat_dt<-features_dt()
-    dt_data<-data%>%select(feat_dt,Salary)
-    split_size <- sample(nrow(dt_data), nrow(dt_data)*split_data())
-    
-    trainSet_dt <- dt_data[split_size,]
-    
-    testSet_dt <- dt_data[-split_size,]
-    dt_fit = train(Salary ~ ., 
-                   data=trainSet_dt, 
-                   method="rpart", 
-                   trControl = trainControl(method = "cv"),
-                   tuneGrid =  expand.grid(cp = tune_dt())
-    )
-    dt_predict=predict(dt_fit,testSet_dt)
-    dt_test_rmse<-sqrt(mean((testSet_dt$Salary-dt_predict)^2))
-    print(dt_test_rmse)
-    
+    d1<-c(input$variable1_train)
   })
   
   # Fitting Random forest
   
-  features_rf<-eventReactive(input$train_mod,{
-    val1<-c(input$train_var3)
+  forest_features<-eventReactive(input$train_mod,{
+    d1<-c(input$variable3_train)
   })
   
   tune_rf<-eventReactive(input$train_mod,{
-    val1<-c(input$ntree)
+    d1<-c(input$trees)
   })
   
   output$rf_train_rmse<-renderText({
     split_first<-split_data()
-    feat_rf<-features_rf()
-    rf_data<-data%>%select(feat_rf,Salary)
-    split_size <- sample(nrow(rf_data), nrow(rf_data)*split_data())
+    forest_features<-forest_features()
+    forest_data<-school_data2%>%select(forest_features(),Employability_After)
+    split_size <- sample(nrow(forest_data), nrow(forest_data)*split_data())
     
-    trainSet_rf <- rf_data[split_size,]
+    Forest_Train <- forest_data[split_size,]
     
-    testSet_rf <- rf_data[-split_size,]
+    Forest_Test <- forest_data[-split_size,]
     
     cv<-trainControl(method = "repeatedcv", number = 5, repeats = 3)
-    tuning<-expand.grid(.mtry=ncol(trainSet_rf)/3)
+    tuning<-expand.grid(.mtry=ncol(Forest_Train)/3)
     ntrees=tune_rf()
-    rf_fit <- train(Salary~., 
-                    data = trainSet_rf, 
-                    method = "rf",
-                    trControl=cv, 
-                    preProcess = c("center", "scale"),
-                    ntree=ntrees,
-                    tuneGrid = tuning)
-    rf_predict <- predict(rf_fit, newdata = trainSet_rf)
-    rf_train_mse <- sqrt(mean((rf_predict - trainSet_rf$Salary)^2))
-    print(rf_train_mse)
+    forest_fit <- train(Employability_After~., 
+                        data = Forest_Train, 
+                        method = "rf",
+                        trControl=cv, 
+                        preProcess = c("center", "scale"),
+                        ntree=ntrees,
+                        tuneGrid = tuning)
+    forest_predict <- predict(forest_fit, newdata = Forest_Train)
+    forest_train_mse <- sqrt(mean((forest_predict - Forest_Train$Employability_After)^2))
+    print(forest_train_mse)
     
     
   })
   
   output$rf_test_rmse<-renderText({
     split_first<-split_data()
-    feat_rf<-features_rf()
-    rf_data<-data%>%select(feat_rf,Salary)
-    split_size <- sample(nrow(rf_data), nrow(rf_data)*split_data())
+    forest_features<-forest_features()
+    forest_data<-school_data2%>%select(forest_features(),Employability_After)
+    split_size <- sample(nrow(forest_data), nrow(forest_data)*split_data())
     
-    trainSet_rf <- rf_data[split_size,]
+    Forest_Train <- forest_data[split_size,]
     
-    testSet_rf <- rf_data[-split_size,]
+    Forest_Test <- forest_data[-split_size,]
     
     cv<-trainControl(method = "repeatedcv", number = 5, repeats = 3)
-    tuning<-expand.grid(.mtry=ncol(trainSet_rf)/3)
+    tuning<-expand.grid(.mtry=ncol(Forest_Train)/3)
     ntrees=tune_rf()
-    rf_fit <- train(Salary~., 
-                    data = trainSet_rf, 
-                    method = "rf",
-                    trControl=cv, 
-                    preProcess = c("center", "scale"),
-                    ntree=ntrees,
-                    tuneGrid = tuning)
-    rf_predict <- predict(rf_fit, newdata = testSet_rf)
-    rf_test_mse <- sqrt(mean((rf_predict - testSet_rf$Salary)^2))
+    forest_fit <- train(Employability_After~., 
+                        data = Forest_Train, 
+                        method = "rf",
+                        trControl=cv, 
+                        preProcess = c("center", "scale"),
+                        ntree=ntrees,
+                        tuneGrid = tuning)
+    forest_predict <- predict(forest_fit, newdata = Forest_Test)
+    rf_test_mse <- sqrt(mean((forest_predict - Forest_Test$Employability_After)^2))
     print(rf_test_mse)
     
   })
   
+  # Fitting Decision Tree
+  decision_features<-eventReactive(input$train_mod,{
+    d1<-c(input$variable2_train)
+  })
+  
+  tune_dt<-eventReactive(input$train_mod,{
+    d1<-c(input$complexity)
+  })
+  
+  output$decision_tree_train_rmse<-renderText({
+    split_first<-split_data()
+    tree_features<-decision_features()
+    tree_data<-school_data2%>%select(decision_features(),Employability_After)
+    split_size <- sample(nrow(tree_data), nrow(tree_data)*split_data())
+    
+    Decision_Train <- tree_data[split_size,]
+    
+    Decision_Test <- tree_data[-split_size,]
+    decision_fit = train(Employability_After ~ ., data=Decision_Train, method="rpart", trControl = trainControl(method = "cv"),tuneGrid =  expand.grid(cp = tune_dt()))
+    decision_predict=predict(decision_fit,Decision_Train)
+    decision_train_rmse<-sqrt(mean((Decision_Train$Employability_After-decision_predict)^2))
+    print(decision_train_rmse)
+    
+  })
+  
+  output$decision_tree_test_rmse<-renderText({
+    split_first<-split_data()
+    tree_features<-decision_features()
+    tree_data<-school_data2%>%select(decision_features(),Employability_After)
+    split_size <- sample(nrow(tree_data), nrow(tree_data)*split_data())
+    
+    Decision_Train <- tree_data[split_size,]
+    
+    Decision_Test <- tree_data[-split_size,]
+    decision_fit = train(Employability_After ~ ., 
+                         data=Decision_Train, 
+                         method="rpart", 
+                         trControl = trainControl(method = "cv"),
+                         tuneGrid =  expand.grid(cp = tune_dt())
+    )
+    decision_predict=predict(decision_fit,Decision_Test)
+    decision_test_rmse<-sqrt(mean((Decision_Test$Employability_After-decision_predict)^2))
+    print(decision_test_rmse)
+    
+  })
+  
+  
+  # Fitting Linear Regression
+  output$linear_test_rmse<-renderText({
+    split_first<-split_data()
+    linear_feature<-lin_feat()
+    linear_data<-school_data%>%select(lin_feat(),Employability_After)
+    split_size <- sample(nrow(linear_data), nrow(linear_data)*split_first)
+    
+    Linear_Train <- linear_data[split_size,]
+    
+    Linear_Test <- linear_data[-split_size,]
+    
+    linear_fit<-lm(Employability_After~.,data=Linear_Train,trControl=trainControl(method = "repeatedcv", number = 5, repeats = 3))
+    linear_predict=predict(linear_fit,Linear_Test)
+    linear_test_rmse<-sqrt(mean((Linear_Test$Employability_After-linear_predict)^2))
+    print(linear_test_rmse)
+  })
+  
+  output$lin_train_rmse<-renderText({
+    split_first<-split_data()
+    linear_feature<-lin_feat()
+    linear_data<-school_data%>%select(lin_feat(),Employability_After)
+    split_size <- sample(nrow(linear_data), nrow(linear_data)*split_data())
+    
+    Linear_Train <- linear_data[split_size,]
+    
+    Linear_Test <- linear_data[-split_size,]
+    
+    linear_fit<-lm(Employability_After~.,data=Linear_Train,trControl=trainControl(method = "repeatedcv", number = 5, repeats = 3))
+    
+    linear_predict=predict(linear_fit,Linear_Train)
+    lin_train_rmse<-sqrt(mean((Linear_Train$Employability_After-linear_predict)^2))
+    print(lin_train_rmse)
+  })
   
 })
