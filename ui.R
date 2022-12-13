@@ -65,7 +65,7 @@ dashboardPage(
       tabItem(tabName = "EDA",
               
               
-             
+              
               fluidRow(
                 column(6,
                        box(width=NULL,height=405,title="Numerical Summary",
@@ -83,7 +83,7 @@ dashboardPage(
                        )
                 )
               ),
-
+              
               fluidRow(
                 column(2,
                        box(width=NULL,title="Types of plot",

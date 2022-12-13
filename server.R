@@ -83,7 +83,7 @@ shinyServer(function(input, output) {
   })
   
   output$plot2<-renderPlot({
-
+    
     if(input$Scatter_Line=="scatter"){
       plot<- school_data2 %>%
         select(MBA_Grade, Salary) %>%
@@ -96,9 +96,9 @@ shinyServer(function(input, output) {
     }
     p
   })
-
+  
   output$plot5<-renderPlot({
-
+    
     if(input$Scatter_Line=="scatter_and_line"){
       plot<- school_data2 %>%
         select(Undergrad_Grade, Salary) %>%
@@ -112,7 +112,7 @@ shinyServer(function(input, output) {
     p
   })
   output$plot6<-renderPlot({
-
+    
     if(input$Scatter_Line=="scatter_and_line"){
       plot<- school_data2 %>%
         select(MBA_Grade, Salary) %>%
@@ -125,13 +125,13 @@ shinyServer(function(input, output) {
     }
     p
   })
-
+  
   output$plot3<-renderPlot({
     if(input$Scatter_Line=="line"){
       p<-plot(seq(1:1200), school_data2$Salary, xlab = "Number", ylab = "Salary", 
               type = "l")
     }
-
+    
     p
   })
   output$plot4<-renderPlot({
@@ -139,16 +139,16 @@ shinyServer(function(input, output) {
       p<-plot(seq(1:1200), school_data2$MBA_Grade, xlab = "Number", ylab = "MBA Grade", 
               type = "l")
     }
-
+    
     p
   })
-
+  
   output$plot7<-renderPlot({
     if(input$Scatter_Line=="scatter_and_line"){
       p<-plot(seq(1:1200), school_data2$Salary, xlab = "Number", ylab = "Salary", 
               type = "l")
     }
-
+    
     p
   })
   output$plot8<-renderPlot({
@@ -156,10 +156,10 @@ shinyServer(function(input, output) {
       p<-plot(seq(1:1200), school_data2$MBA_Grade, xlab = "Number", ylab = "MBA Grade", 
               type = "l")
     }
-
+    
     p
   })
-
+  
   # Splitting the data 
   split_data<-eventReactive(input$split,{
     
@@ -381,7 +381,7 @@ shinyServer(function(input, output) {
                           ntree=ntrees
       )
       predict_value <- predict(fit_forest, data.frame(Undergrad_Degree=as.factor(parameters[[1]]),Undergrad_Grade=as.numeric(parameters[[2]]),MBA_Grade=as.numeric(parameters[[3]]),Work_Experience=as.factor(parameters[[4]]),Employability_Before=as.numeric(parameters[[5]]),
-                                                        Status=as.factor(parameters[[6]]),Salary=as.numeric(parameters[[7]])))
+                                                      Status=as.factor(parameters[[6]]),Salary=as.numeric(parameters[[7]])))
       
       
       
@@ -398,8 +398,8 @@ shinyServer(function(input, output) {
   })
   output$data_csv<-renderDataTable({
     
-    size=rows_count()
-    data_sub<-school_data3%>%select(reading())
+    
+    data_sub<-rows_count()%>%select(reading())
     
   })    
   
