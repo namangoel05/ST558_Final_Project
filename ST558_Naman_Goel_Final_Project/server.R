@@ -316,4 +316,103 @@ shinyServer(function(input, output) {
     print(lin_train_rmse)
   })
   
+  ##Prediction
+  type_model<-reactive({
+    input$model_choose
+  })
+  
+  predict_param<-reactive({
+    predict_value<-c(input$p_ud,input$p_ug,input$p_mb,input$p_we,input$p_eb,input$p_js,input$p_sal)
+  })
+  
+  output$predicted_output<-renderText({
+    model_choose<-type_model()
+    
+    if(model_choose=="linear"){
+      parameters<-predict_param()
+      split_first<-split_data()
+      split_quant <- sample(nrow(school_data2), nrow(school_data2)*split_data())
+      
+      Linear_Train <- school_data2[split_quant,]
+      
+      Linear_Test <- school_data2[-split_quant,]
+      fit_linear<-lm(Employability_After~.,data=Linear_Train,trControl=trainControl(method = "repeatedcv", number = 5, repeats = 3))
+      
+      predict_value<-predict(fit_linear,data.frame(Undergrad_Degree=as.factor(parameters[[1]]),Undergrad_Grade=as.numeric(parameters[[2]]),MBA_Grade=as.numeric(parameters[[3]]),Work_Experience=as.factor(parameters[[4]]),Employability_Before=as.numeric(parameters[[5]]),
+                                                   Status=as.factor(parameters[[6]]),Salary=as.numeric(parameters[[7]])))
+      
+    }
+    if(model_choose=="reg tree"){
+      parameters<-predict_param()
+      split_first<-split_data()
+      split_quant <- sample(nrow(school_data2), nrow(school_data2)*split_data())
+      
+      Decision_Train <- school_data2[split_quant,]
+      
+      Decision_Test <- school_data2[-split_quant,] 
+      
+      fit_decision = train(Employability_After ~ ., 
+                           data=Decision_Train, 
+                           method="rpart", 
+                           trControl = trainControl(method = "cv"),
+                           tuneGrid =  expand.grid(cp = tune_dt())
+      )
+      predict_value=predict(fit_decision,data.frame(Undergrad_Degree=as.factor(parameters[[1]]),Undergrad_Grade=as.numeric(parameters[[2]]),MBA_Grade=as.numeric(parameters[[3]]),Work_Experience=as.factor(parameters[[4]]),Employability_Before=as.numeric(parameters[[5]]),
+                                                    Status=as.factor(parameters[[6]]),Salary=as.numeric(parameters[[7]])))
+      
+      
+    }
+    if(model_choose=="forest"){
+      parameters<-predict_param()
+      split_first<-split_data()
+      split_quant <- sample(nrow(school_data2), nrow(school_data2)*split_data())
+      
+      Forest_Train <- school_data2[split_quant,]
+      
+      Forest_Test <- school_data2[-split_quant,]
+      cv<-trainControl(method = "repeatedcv", number = 5, repeats = 3)
+      
+      ntrees=tune_rf()
+      fit_forest <- train(Employability_After~., 
+                          data = Forest_Train, 
+                          method = "rf",
+                          trControl=cv, 
+                          preProcess = c("center", "scale"),
+                          ntree=ntrees
+      )
+      predict_value <- predict(fit_forest, data.frame(Undergrad_Degree=as.factor(parameters[[1]]),Undergrad_Grade=as.numeric(parameters[[2]]),MBA_Grade=as.numeric(parameters[[3]]),Work_Experience=as.factor(parameters[[4]]),Employability_Before=as.numeric(parameters[[5]]),
+                                                        Status=as.factor(parameters[[6]]),Salary=as.numeric(parameters[[7]])))
+      
+      
+      
+    }
+    predict_value
+  })
+  
+  # Reading the data and downloading it  
+  reading<-reactive({
+    attribute_1<-c(input$get_data)
+  })
+  rows_count<-reactive({
+    school_data3[c(1:input$offset),]
+  })
+  output$data_csv<-renderDataTable({
+    
+    size=rows_count()
+    data_sub<-school_data3%>%select(reading())
+    
+  })    
+  
+  # Download the data
+  
+  output$download <- downloadHandler(
+    filename = function() { 
+      paste("Maven1", Sys.Date(), ".csv", sep="")
+    },
+    content = function(file) {
+      down_data<-rows_count()%>%select(reading())
+      
+      write.csv(down_data , file)
+    }
+  )  
 })

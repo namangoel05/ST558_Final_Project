@@ -278,7 +278,7 @@ dashboardPage(
                            column(1
                            ),
                            column(5,
-                                  box(width=NULL,status="success",
+                                  box(width=NULL,status="info",
                                       sliderInput("split_now","Training Set Splitting %age",min=0.6,max=0.9,value=0.65,step=0.05))
                            ),
                            column(5,
@@ -288,16 +288,7 @@ dashboardPage(
                            )
                          ),
                          fluidRow(
-                           column(4,
-                                  box(width=NULL,title="Linear Regression",status="info",solidHeader = TRUE,
-                                      checkboxGroupInput("variable1_train","Select variables:",
-                                                         c("Undergraduate Degree"="Undergrad_Degree","Undergraduate Grade"="Undergrad_Grade",
-                                                           "MBA Grade"="MBA_Grade","Previous Work Experience"="Work_Experience",
-                                                           "Empliyability Before MBA"="Employability_Before",#"Empliyability After MBA"="Employability_After",
-                                                           "Job Status"="Status","Salary"="Salary"),
-                                                         selected=c("Undergrad_Grade","Work_Experience","Status"))
-                                  )
-                           ),
+                           
                            column(4,
                                   box(width=NULL,title="Regression Tree",
                                       status="info",solidHeader = TRUE,
@@ -309,6 +300,16 @@ dashboardPage(
                                                          selected=c("Undergrad_Grade","Work_Experience","Status")),
                                       sliderInput("complexity","Select the Complexity",
                                                   min=0.0,max=0.5,value=0.2,step=0.05)
+                                  )
+                           ),
+                           column(4,
+                                  box(width=NULL,title="Linear Regression",status="info",solidHeader = TRUE,
+                                      checkboxGroupInput("variable1_train","Select variables:",
+                                                         c("Undergraduate Degree"="Undergrad_Degree","Undergraduate Grade"="Undergrad_Grade",
+                                                           "MBA Grade"="MBA_Grade","Previous Work Experience"="Work_Experience",
+                                                           "Empliyability Before MBA"="Employability_Before",#"Empliyability After MBA"="Employability_After",
+                                                           "Job Status"="Status","Salary"="Salary"),
+                                                         selected=c("Undergrad_Grade","Work_Experience","Status"))
                                   )
                            ),
                            column(4,
@@ -376,11 +377,11 @@ dashboardPage(
                            column(2),
                            column(8,
                                   box(width=NULL,
-                                      selectInput("model_input","Select the model you want to use 
+                                      selectInput("model_choose","Select the model you want to use 
                               for prediction",
-                                                  c("Linear Regression"="lg",
-                                                    "Classification Tree"="tree",
-                                                    "Random Forest"="rf"),selected="lg")
+                                                  c("Linear Regression"="linear",
+                                                    "Regression Tree"="reg tree",
+                                                    "Random Forest"="forest"),selected="linear")
                                   )     
                            ),
                            column(2)
@@ -389,77 +390,50 @@ dashboardPage(
                            column(1),
                            column(5,
                                   box(width=NULL,title="Select the values of predictors",
+                                      selectInput("p_ud","Undergraduate Degree",
+                                                  c("Business"=1,"Computer Science"=2,"Engineering"=3,"Finance"=4,"Art"=5),selected=1,width=350),
                                       numericInput("p_ug","Undergraduate Grade",
-                                                   min=0,max=100,value=65,step=0.1,width=300),
+                                                   min=0,max=100,value=65,step=0.1,width=350),
                                       numericInput("p_mb","MBA Grade",
-                                                   min=0,max=100,value=65,step=0.1,width=300),
+                                                   min=0,max=100,value=65,step=0.1,width=350),
                                       selectInput("p_we","Previous Work Experience",
-                                                  c("Yes"=1,"No"=0),selected=0,width=300),
+                                                  c("Yes"=1,"No"=0),selected=0,width=350),
                                       numericInput("p_eb","Employability Before",
-                                                   min=62,max=423,value=191,step=1,width=300),
-                                      numericInput("p_ea","Employability After",
-                                                   min=62,max=698,value=191,step=1,width=300),
+                                                   min=62,max=423,value=191,step=1,width=350),
                                       selectInput("p_js","Job Status",
-                                                  c("Placed"=1,"Not Placed"=0),selected=1,width=300),
+                                                  c("Placed"=1,"Not Placed"=0),selected=1,width=350),
                                       numericInput("p_sal","Salary",
-                                                   min=0,max=471000,value=256000,step=1000,width=300),
+                                                   min=76000,max=470000,value=148000,step=1000,width=350)
                                   )
                            ),
                            column(5,
                                   box(width=NULL,title="Prediction",solidHeader=TRUE,
                                       status="info",align="center",
-                                      textOutput("final_prediction"))
+                                      textOutput("predicted_output"))
                            ),
                            column(1)
                          ),
                 )
               )
       ), #tabItem
-      tabItem(tabName = "data",
-              fluidRow(
-                column(3),
-                column(6,align = "center",
-                       box(width=NULL,height=45,background="red",
-                           title="Get Dataset"
-                       )
-                ),
-                column(3)
-              ),
-              fluidRow(
-                column(2),
-                column(8,
-                       box(width=NULL,height=150,align="center",
-                           h5("You can use this page to obtain the csv file for the dataset."),
-                           h5("1. Select the variables you want from the dataset."),
-                           h5("2. Select",tags$b("Offset:"),"The record number from which you want to get the data."),
-                           h5("3. Select",tags$b("Count:"),"The number of record you want in your dataset"),
-                           h5("4. Download CSV")
-                       )
-                ),
-                column(2),
-              ),
+      tabItem(tabName = "Data",
+              
+              
               fluidRow(
                 column(3,
                        box(width=NULL,
                            checkboxGroupInput("get_data","Select predictor variables:",
-                                              c("Age (age)"="age","Sex (sex)"="sex",
-                                                "Chest pain type (cp)"="cp",
-                                                "Resting blood pressure (trestbps)"="trestbps",
-                                                "Cholestrol (chol)"="chol",
-                                                "Fasting blood sugar (fbs)"="fbs",
-                                                "Resting ECG (restecg)"="restecg",
-                                                "Max. heart rate (thalach)"="thalach",
-                                                "Exercise induced angina (exang)"="exang",
-                                                "ST depression induced (oldpeak)"="oldpeak",
-                                                "Slope (slope)"="slope",
-                                                "Blood disorder (thal)"="thal","Target"="target"),
-                                              selected=c("age","sex","chol","fbs","thalach","cp",
-                                                         "trestbps","restecg","exang","oldpeak",
-                                                         "slope","thal","target")),
+                                              c("Undergraduate Degree"="Undergrad_Degree",
+                                                "Undergraduate Grade"="Undergrad_Grade",
+                                                "MBA Grade"="MBA_Grade",
+                                                "Previous Work Experience"="Work_Experience",
+                                                "Empliyability Before MBA"="Employability_Before",
+                                                "Empliyability After MBA"="Employability_After",
+                                                "Job Status"="Status","Salary"="Salary"),
+                                              selected=c("Undergrad_Degree","Salary","Work_Experience")),
                            numericInput("offset","Select offset value",
-                                        min=0,max=1020,value=0,step=1,width=300),
-                           numericInput("count","Select count value",
-                                        min=5,max=1025,value=100,step=1,width=300),
+                                        min=100,max=1200,value=0,step=1,width=300),
+                           
                            downloadButton('download',"Download CSV")
                        )
                 ),
@@ -468,7 +442,7 @@ dashboardPage(
                            dataTableOutput("data_csv"))
                 )
               )
-      ) #tabItem
-    ) #tabItems
-  ) #dashboardBody
-) #dashboardPage
+      ) 
+    ) 
+  ) 
+) 
