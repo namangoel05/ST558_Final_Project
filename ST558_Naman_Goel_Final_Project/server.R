@@ -398,8 +398,8 @@ shinyServer(function(input, output) {
   })
   output$data_csv<-renderDataTable({
     
-    size=rows_count()
-    data_sub<-school_data3%>%select(reading())
+    
+    data_sub<-rows_count()%>%select(reading())
     
   })    
   
