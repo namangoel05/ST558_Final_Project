@@ -27,35 +27,34 @@ dashboardPage(
                 column(3)
               ),
               fluidRow(
-                column(12,
+                column(4,
                        box(width=NULL,title="About the App",status="info",solidHeader = TRUE,
                            h4("The purpose of this app is to create an interactive application on business school data"),
                            h4("Through this application, we will try and explore the business school data and how students coming from different backgrounds in there undergraduate degrees perform in an MBA class. The app will contain information about 
                                         data, exploaratory data analysis and summaries of various features in the data. Along with that different machine learning models will be explained and how they performed on the actual data."))
                        
+                ),column(4,
+                        box(width=NULL,title="Data",status="info",solidHeader = TRUE,
+                            h4("As part of this project, I decided to opt for a business school dataset which holds information about students and how they performed individually. The idea is to understand if the program is biased towards students coming from a certain background and more favourable towards certain."),
+                            h4("The dataset contains 1200 rows of data. Some of the attributes we have as part of the dataset are student undergraduate degree, undergraduate marks, MBA marks, if they have prior work experience or not, have they got a job or not, and an employability score. The data set has no missing or errenous values."),
+                            h4("The data set is taken from",a(href="https://www.kaggle.com/datasets/oluwatosinamosu/graduate-business-school-dataset","Business School",style="font-size:20px;")))
+                        
+                        
+                        
+                ),column(4,
+                        box(width=NULL,title="Contents",status="info",solidHeader = TRUE,
+                            h4("1) About the application"),
+                            h4("2) Exploratory Data Analysis"),
+                            h4("3) Prediction using Modelling"),
+                            h4("4) Data and its attributes"))
+                        
                 )),
+              
               fluidRow(
                 column(12,
-                       box(width=NULL,title="Data",status="info",solidHeader = TRUE,
-                           h4("As part of this project, I decided to opt for a business school dataset which holds information about students and how they performed individually. The idea is to understand if the program is biased towards students coming from a certain background and more favourable towards certain."),
-                           h4("The dataset contains 1200 rows of data. Some of the attributes we have as part of the dataset are student undergraduate degree, undergraduate marks, MBA marks, if they have prior work experience or not, have they got a job or not, and an employability score. The data set has no missing or errenous values."),
-                           h4("The data set is taken from",a(href="https://www.kaggle.com/datasets/oluwatosinamosu/graduate-business-school-dataset","Business School",style="font-size:20px;")))
-                       
-                       
-                       
-                )),
-              fluidRow(
-                column(12,
-                       box(width=NULL,title="Contents",status="info",solidHeader = TRUE,
-                           h4("1) About the application"),
-                           h4("2) Exploratory Data Analysis"),
-                           h4("3) Prediction using Modelling"),
-                           h4("4) Data and its attributes"))
-                       
-                )),
-              fluidRow(
-                column(12,
-                       box(width=NULL,title="About the application",status="info",solidHeader = TRUE,h4())
+                       box(width=NULL,title="About the application",status="info",solidHeader = TRUE,
+                           h4("The application developed as part of this project aims to provide insights on how MBA graudates coming from different backgrounds perform. The performance has been measured using an attribute called Eployability score after and before employement, and it can be seen that students emplyability imporved considerably after pursuing an MBA program. Also, it shows that most students did no have any work experience prior to pursuing the MBA program, but many of those students were able to grab jobs with handsome salaries."),
+                           h4("We also tried using different statistical models to try and redict the employabiity of these students by varying different predictors and observing how the change impacts the empmloyability of these students."))
                        
                 )
                 
@@ -188,82 +187,75 @@ dashboardPage(
               tabsetPanel(
                 tabPanel("Model Theory",
                          fluidRow(
-                           column(12,
+                           column(6,
                                   box(width=NULL,title="Linear Regression",
                                       status="info",solidHeader = TRUE,
-                                      h4("A variable's value can be predicted using linear regression analysis based on the value of another variable. The dependent variable is the one you want to be able to forecast. The independent variable is the one you're using to make a prediction about the value of the other variable."),
+                                      h4("In statistics, linear regression is a linear approach for modelling the relationship between a scalar response and one or more explanatory variables (also known as dependent and independent variables). The case of one explanatory variable is called simple linear regression; for more than one, the process is called multiple linear regression. This term is distinct from multivariate linear regression, where multiple correlated dependent variables are predicted, rather than a single scalar variable."),
                                       h4(""),
                                       withMathJax(),
                                       helpText('$$y = \\beta_0 + \\beta_1 \\cdot x_1 + 
                          \\beta_2 \\cdot x_2 + ... + \\beta_k \\cdot x_k$$'),
                                       
-                                      h4("Here Y is the dependent variable, x1,x2....xk are independent variables and Betas are co-efficent of independe variables. Coefficients are the amount by which change in X must be multiplied to give the corresponding average change in Y."),
-                                      h4(tags$b("Benefits:"),
+                                      h4("Abovem Y is the dependent variable, x1,x2...etc are the independent variables and Betas are co-efficent of independent variables. Coefficients are the amount by which change in X must be multiplied to give the corresponding average change in Y."),
+                                      h4(tags$b("Advantages:"),
                                          tags$br(),
-                                         "Linear regression performs exceptionally well for linearly separable data",
+                                         "High interpretability",
                                          tags$br(),
-                                         "Easier to implement, interpret and efficient to train",
+                                         "Real world applicable assumptions due to central limit theorem",
                                          tags$br(),
-                                         "It handles overfitting pretty well using dimensionally reduction techniques, regularization, and cross-validation"),
-                                      h4(tags$b("Drawbacks:"),
+                                         "Fast and Scalable"),
+                                      h4(tags$b("Disadvantages:"),
                                          tags$br(),
-                                         "The assumption of linearity between dependent and independent variables",
+                                         "Does not capture non linear relationships",
                                          tags$br(),
-                                         "It is often quite prone to noise and overfitting",
+                                         "Estimation methods cannot handle multicolinearity",
                                          tags$br(),
-                                         "It is prone to multicollinearity "
+                                         "Low performance in real world applications"
                                       )
                                   )
+                           ),column(6,
+                                    box(width=NULL,title="Regression Decision Tree",
+                                        status="info",solidHeader = TRUE,
+                                        h4("A regression tree is basically a decision tree that is used for the task of regression which can be used to predict continuous valued outputs instead of discrete outputs."),
+                                        
+                                        h4(tags$b("Advantages:"),
+                                           tags$br(),
+                                           "Captures non linear relationships",
+                                           tags$br(),
+                                           "Highly flexible",
+                                           tags$br(),
+                                           "Decision tree is fairly easy to explain compared to modern machine learning models"),
+                                        h4(tags$b("Disadvantages:"),
+                                           tags$br(),
+                                           "Not very scalable",
+                                           tags$br(),
+                                           "Takes very long to train",
+                                           tags$br(),
+                                           "Highly biased towards training dataset")
+                                        
+                                    )
+                           )),column(12,
+                                    box(width=NULL,title="Random Forest Model",
+                                        status="info",solidHeader = TRUE,
+                                        h4("Random forests or random decision forests is an ensemble learning method for classification, regression and other tasks that operates by constructing a multitude of decision trees at training time. For classification tasks, the output of the random forest is the class selected by most trees. For regression tasks, the mean or average prediction of the individual trees is returned."),
+                                        
+                                        h4(tags$b("Advantages:"),
+                                           tags$br(),
+                                           "Not biased towards training dataset",
+                                           tags$br(),
+                                           "It provides an effective way of handling missing data.",
+                                           tags$br(),
+                                           "It can produce a reasonable prediction without hyper-parameter tuning."),
+                                        h4(tags$b("Disadvantages:"),
+                                           tags$br(),
+                                           "It is a difficult tradeoff between the training time (and space) and increased number of trees.",
+                                           tags$br(),
+                                           "Random forest may not get good results for small data or low-dimensional data.",
+                                           tags$br(),
+                                           "Less interpretability.")
+                                    )
                            )
                          ),
-                         fluidRow(
-                           column(12,
-                                  box(width=NULL,title="Regression Decision Tree",
-                                      status="info",solidHeader = TRUE,
-                                      h4("Regression trees are decision trees with continuous target variables rather than class labels on the leaves. Modified split selection criteria and halting criteria are used with regression trees. The decisions may be explained, prospective outcomes can be seen, and potential events can be identified using a regression tree."),
-                                      
-                                      h4(tags$b("Benefits:"),
-                                         tags$br(),
-                                         "Compared to other algorithms decision trees requires less effort for data preparation during pre-processing.",
-                                         tags$br(),
-                                         "A decision tree does not require normalization and scaling of data",
-                                         tags$br(),
-                                         "A Decision tree model is very intuitive and easy to explain"),
-                                      h4(tags$b("Drawbacks:"),
-                                         tags$br(),
-                                         "A small change in the data can cause a large change in the structure of the decision tree causing instability.",
-                                         tags$br(),
-                                         "Decision tree often involves higher time to train the model.",
-                                         tags$br(),
-                                         "Need to prune them to reduce variance")
-                                      
-                                  )
-                           )
-                         ),
-                         fluidRow(
-                           column(12,
-                                  box(width=NULL,title="Random Forest Model",
-                                      status="info",solidHeader = TRUE,
-                                      h4("Random Forest develops on functionalities of Bagging. A number of multiple bootstrap samples are created with replacement and trees are fitted on these samples to predict the response variable. Random forest take average of these trees to arrive at a result. However random forest don't take all the feature for building the trees, unlike bagging. The features are selected at random which helps to reduce the correlation among the trees and hence reduces variance."),
-                                      
-                                      h4(tags$b("Benefits:"),
-                                         tags$br(),
-                                         "It solves the issue of overfitting in decision trees.",
-                                         tags$br(),
-                                         "It provides an effective way of handling missing data.",
-                                         tags$br(),
-                                         "It can produce a reasonable prediction without hyper-parameter tuning."),
-                                      h4(tags$b("Drawbacks:"),
-                                         tags$br(),
-                                         "It is a difficult tradeoff between the training time (and space) and increased number of trees.",
-                                         tags$br(),
-                                         "Random forest may not get good results for small data or low-dimensional data.",
-                                         tags$br(),
-                                         "Less interpretability.")
-                                  )
-                           )
-                         )
-                ),
                 tabPanel("Model Fitting",
                          fluidRow(
                            column(1
