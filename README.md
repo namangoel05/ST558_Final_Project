@@ -25,6 +25,6 @@ install.packages("leaps")
 install.packages("psych")     
 install.packages("corrplot")      
 
-## Code to Run App
+## Command to run application
 
 runGitHub("ST558_Final_Project", "namangoel05")
