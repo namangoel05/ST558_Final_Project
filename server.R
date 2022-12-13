@@ -1,4 +1,4 @@
-# server function for  daily student alchohol consumption
+# server function for business school students data
 
 library(shiny)
 library(tidyverse)
@@ -65,7 +65,7 @@ shinyServer(function(input, output) {
           geom_bar(position = "dodge")
       }}
     p
-  }) # Code for plotting scatterplot or histogram
+  }) # Code for plotting scatterplot or line graph
   
   output$plot1<-renderPlot({
     
@@ -159,6 +159,33 @@ shinyServer(function(input, output) {
     
     p
   })
+  
+  # Reading the data and allowing customization to it for the purpose of downloading
+  reading<-reactive({
+    attribute_1<-c(input$get_data)
+  })
+  rows_count<-reactive({
+    school_data3[c(1:input$offset),]
+  })
+  output$data_csv<-renderDataTable({
+    
+    
+    data_sub<-rows_count()%>%select(reading())
+    
+  })    
+  
+  # Enabling the ability to download data
+  
+  output$download <- downloadHandler(
+    filename = function() { 
+      paste("Maven1", Sys.Date(), ".csv", sep="")
+    },
+    content = function(file) {
+      down_data<-rows_count()%>%select(reading())
+      
+      write.csv(down_data , file)
+    }
+  )  
   
   # Splitting the data 
   split_data<-eventReactive(input$split,{
@@ -389,30 +416,5 @@ shinyServer(function(input, output) {
     predict_value
   })
   
-  # Reading the data and downloading it  
-  reading<-reactive({
-    attribute_1<-c(input$get_data)
-  })
-  rows_count<-reactive({
-    school_data3[c(1:input$offset),]
-  })
-  output$data_csv<-renderDataTable({
-    
-    
-    data_sub<-rows_count()%>%select(reading())
-    
-  })    
-  
-  # Download the data
-  
-  output$download <- downloadHandler(
-    filename = function() { 
-      paste("Maven1", Sys.Date(), ".csv", sep="")
-    },
-    content = function(file) {
-      down_data<-rows_count()%>%select(reading())
-      
-      write.csv(down_data , file)
-    }
-  )  
+
 })
